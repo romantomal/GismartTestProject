@@ -1,18 +1,17 @@
 import { AnyAction } from 'redux';
-import {
-  START_FETCHING,
-  STOP_FETCHING,
-} from 'actions/common';
+import {ERROR_FETCHING, START_FETCHING, STOP_FETCHING, SUCCESS_FETCHING} from "actions/actionTypes";
 
 const initState = {
   fetching: false,
+  rateData: {},
+  error: null
 };
 
 export interface ICommonState {
   fetching: boolean;
 }
 
-function commonReducer(state: ICommonState = initState, { type, payload = null }: AnyAction) {
+function commonReducer(state: ICommonState = initState, { type, rateData, error }: AnyAction) {
   switch (type) {
     case START_FETCHING: {
       return {
@@ -22,6 +21,18 @@ function commonReducer(state: ICommonState = initState, { type, payload = null }
     case STOP_FETCHING: {
       return {
         fetching: false,
+      }
+    }
+    case SUCCESS_FETCHING: {
+      return {
+        fetching: true,
+        rateData
+      }
+    }
+    case ERROR_FETCHING: {
+      return {
+        fetching: false,
+        error
       }
     }
     default:

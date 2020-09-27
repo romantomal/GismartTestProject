@@ -3,27 +3,37 @@ import ApexChart, {Props} from 'react-apexcharts';
 import {TReduxProps} from './Container';
 import {StyledContainer} from './style';
 import 'antd/dist/antd.css';
-import {Menu, Dropdown, Button} from 'antd';
+import {Menu, Dropdown} from 'antd';
+import {fetchRate} from "actions/common";
+import {rates} from "../../core/constants/rates";
+import {bindActionCreators} from 'redux';
+import {connect} from "react-redux";
 
-export type TComponentProps = {} & TReduxProps;
+type TComponentProps = ReturnType<typeof mapStateToProps> &
+    ReturnType<typeof mapDispatchToProps> & TReduxProps;
 
-const Rates: React.FC<TComponentProps> = () => {
+const Rates: React.FC<TComponentProps> = (props) => {
 
     const chartOptions = {};
     const chartSeries = [];
     const chartType = 'line';
 
     const menu = (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item key={0}>USD - $</Menu.Item>
-            <Menu.Item key={1}>EUR - €</Menu.Item>
-            <Menu.Item key={2}>RUR - ₽</Menu.Item>
+        <Menu>
+            {rates.map(rate => {return (<Menu.Item key={rate.id} onClick={() => getRate(rate.id)}>{rate.name} - {rate.symbol}</Menu.Item>)})}
         </Menu>
     );
 
-    function handleMenuClick(e) {
-        console.log('click', e);
-    }
+    const getRate = (rateId: number) => {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - 7);
+        props.fetchRate(rateId, dateToRateFormatString(startDate), dateToRateFormatString(endDate));
+    };
+
+    const dateToRateFormatString = (date: Date) => {
+        return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+    };
 
     return (
         <StyledContainer>
@@ -42,4 +52,13 @@ const Rates: React.FC<TComponentProps> = () => {
     )
 };
 
-export default Rates;
+const mapStateToProps = state => ({
+        rateData: state.common.rateData,
+        loading: state.common.loading
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+        fetchRate: (rateId, startDate, endDate) => fetchRate(rateId, startDate, endDate)
+    }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Rates);
