@@ -1,3 +1,3 @@
-export * from './models'
+export * from './models';
 
-export { default } from './store'
+export { default } from './store';

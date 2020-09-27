@@ -1,7 +1,7 @@
-import { createBrowserHistory } from 'history'
+import { createBrowserHistory } from 'history';
 
-const routeHistory = createBrowserHistory()
+const routeHistory = createBrowserHistory();
 
-export const goTo = (path: string): void => routeHistory.push(path)
+export const goTo = (path: string): void => routeHistory.push(path);
 
-export default routeHistory
+export default routeHistory;

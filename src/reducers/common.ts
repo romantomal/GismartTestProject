@@ -1,15 +1,15 @@
-import { AnyAction } from 'redux'
+import { AnyAction } from 'redux';
 import {
   START_FETCHING,
   STOP_FETCHING,
-} from 'actions/common'
+} from 'actions/common';
 
 const initState = {
   fetching: false,
-}
+};
 
 export interface ICommonState {
-  fetching: boolean
+  fetching: boolean;
 }
 
 function commonReducer(state: ICommonState = initState, { type, payload = null }: AnyAction) {
@@ -25,7 +25,7 @@ function commonReducer(state: ICommonState = initState, { type, payload = null }
       }
     }
     default:
-      return state
+      return state;
   }
 }
 
