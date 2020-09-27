@@ -9,6 +9,7 @@ import {rates} from '../../core/constants/rates';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {RateConstant} from '../../core/models/Rate';
+import Loader from "components/Loader/Loader";
 
 type TComponentProps = ReturnType<typeof mapStateToProps> &
     ReturnType<typeof mapDispatchToProps> & TReduxProps;
@@ -40,6 +41,7 @@ const Rates: React.FC<TComponentProps> = (props) => {
 
     return (
         <StyledContainer>
+            {props.fetching ? <Loader/> : null}
             <ApexChart
                 options={chartOptions}
                 series={chartSeries}
