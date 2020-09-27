@@ -1,18 +1,18 @@
-import { TAppDispatchThunk } from 'store';
+import {TAppDispatchThunk} from 'store';
 import {ERROR_FETCHING, START_FETCHING, STOP_FETCHING, SUCCESS_FETCHING} from 'actions/actionTypes';
-import axios from "axios";
+import axios from 'axios';
+import {Rate} from '../core/models/Rate';
+import {ApexChart, ApexOption, ApexSeries, Chart, Xaxis} from '../core/models/ApexChart';
 
 export const fetchRate = (rateId: number, startDate: string, endDate: string) => async (dispatch: TAppDispatchThunk<never>) => {
     dispatch(startFetching());
     try {
-      const result = await axios.get(`https://www.nbrb.by/api/exrates/rates/dynamics/${rateId}?startDate=${startDate}&endDate=${endDate}`)
+        return await axios.get(`https://www.nbrb.by/api/exrates/rates/dynamics/${rateId}?startDate=${startDate}&endDate=${endDate}`)
           .then((response) => {
-            console.log(response);
-            const rates = response.data || [];
-            dispatch(successFetching(rates));
-            dispatch(stopFetching());
+              const rates = convertRateResponse(response.data);
+              dispatch(successFetching(rates));
+              dispatch(stopFetching());
           });
-      return result;
     } catch (error) {
       dispatch(errorFetching(error));
       dispatch(stopFetching());
@@ -44,3 +44,15 @@ export const errorFetching = (error): any => async (dispatch: TAppDispatchThunk<
     error
   })
 };
+
+function convertRateResponse(rates: Rate[]) {
+    if (rates) {
+        const categories = rates.map((rate) => new Date(rate.Date).toLocaleDateString());
+        const data = rates.map((rate) => rate.Cur_OfficialRate);
+        const options = new ApexOption(new Chart('basic-bar'), new Xaxis(categories));
+        const series = [new ApexSeries('Rate', data)];
+        return new ApexChart(options, series);
+    } else {
+        return null;
+    }
+}

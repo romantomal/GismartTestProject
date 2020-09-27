@@ -3,7 +3,7 @@ import {ERROR_FETCHING, START_FETCHING, STOP_FETCHING, SUCCESS_FETCHING} from "a
 
 const initState = {
   fetching: false,
-  rateData: {},
+  rates: null,
   error: null
 };
 
@@ -11,7 +11,7 @@ export interface ICommonState {
   fetching: boolean;
 }
 
-function commonReducer(state: ICommonState = initState, { type, rateData, error }: AnyAction) {
+function commonReducer(state: ICommonState = initState, { type, rates, error }: AnyAction) {
   switch (type) {
     case START_FETCHING: {
       return {
@@ -20,17 +20,19 @@ function commonReducer(state: ICommonState = initState, { type, rateData, error 
     }
     case STOP_FETCHING: {
       return {
+        ...state,
         fetching: false,
       }
     }
     case SUCCESS_FETCHING: {
       return {
-        fetching: true,
-        rateData
+        ...state,
+        rates
       }
     }
     case ERROR_FETCHING: {
       return {
+        ...state,
         fetching: false,
         error
       }
